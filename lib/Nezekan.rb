@@ -1,49 +1,41 @@
 require "nezekan/version"
 
 module Nezekan
+	def secure_action(secured_actions, expected_value)
+		raise SecureActionException.new "You aren't authorized to see this action." if secured_actions.nil?
 
-    @@secure_action = {}
-    @@secure_session = {}
+		action = params[:action]
 
-    def secure_action
-        raise SecureActionException.new "You aren't authorized to see this action." if @@secure_action.nil?
+		if secured_actions.has_key? :exclude
+			exclude_actions = secured_actions[:exclude].to_s.gsub(/ +/, '').split(',')
+			return true if exclude_actions.include? action
+		end
 
-        action = params[:action]
-        #secured_actions = explode(',',preg_replace('/ +/', '',implode(',',array_values($secure_session))))
-        #secured_actions = @@secure_session.values.join(',').gsub(/ +/, '').split(',')
-        
-        if @@secure_action.has_key? :exclude
-            exclude_actions = @@secure_action[:exclude].to_s.gsub(/ +/, '').split(',')
-            return true if exclude_actions.include? action
-        end
 
-        session_name = @@secure_action[:session_name]
-        
+		secured_actions.each do |user_type, _actions|
+			if user_type != :session_name
+				secured_actions = _actions.gsub(/ +/, '').split(',')
+				if (secured_actions.include? action or secured_actions.include? '*') and expected_value == user_type.to_s
+					return true
+				end
+			end
+		end
 
-        @@secure_action.each do |user_type, _actions|
-            if user_type != :session_name
-                secured_actions = _actions.gsub(/ +/, '').split(',')
-                if (secured_actions.include? action or secured_actions.include? '*') and session[session_name] == user_type.to_s
-                    return true
-                end
-            end
-        end
+		raise SecureActionException.new "You aren't authorized to see this action." 
+		
+	end
 
-        raise SecureActionException.new "You aren't authorized to see this action."
-        
-    end
-
-    def secure_session
-        raise SecureSessionException.new "You aren't authorized to see this action." if @@secure_session.nil?
+    def secure_session(secured_sessions)
+        raise SecureSessionException.new "You aren't authorized to see this action." if secured_sessions.nil?
 
         action = params[:action]
   
-        if @@secure_session.has_key? :exclude
-            exclude_actions = @@secure_session[:exclude].to_s.gsub(/ +/, '').split(',')
+        if secured_sessions.has_key? :exclude
+            exclude_actions = secured_sessions[:exclude].to_s.gsub(/ +/, '').split(',')
             return true if exclude_actions.include? action
         end
    
-        @@secure_session.each do |_session, _actions|
+		secured_sessions.each do |_session, _actions|
             
             secured_actions = _actions.gsub(/ +/, '').split(',')
             if (secured_actions.include? action or secured_actions.include? '*') and not session[_session].nil?
