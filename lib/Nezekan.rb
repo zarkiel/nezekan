@@ -1,6 +1,6 @@
 require "nezekan/version"
 
-module Nezekan
+module Nezekan 
 	def secure_action(secured_actions, expected_value)
 		raise SecureActionException.new "You aren't authorized to see this action." if secured_actions.nil?
 
