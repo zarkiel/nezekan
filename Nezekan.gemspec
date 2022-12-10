@@ -6,13 +6,13 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 
 Gem::Specification.new do |spec|
   spec.name          = "nezekan"
-  spec.version       = "0.1.0" #Nezekan::VERSION
+  spec.version       = "1.0.2" #Nezekan::VERSION
   spec.authors       = ["Zarkiel"]
   spec.email         = ["zarkiel@gmail.com"]
 
-  spec.summary       = %q{A complete collection of security interfaces.}
+  spec.summary       = %q{A complete collection of security interfaces and sessions.}
   spec.description   = %q{A complete collection of security interfaces.}
-  spec.homepage      = "https://github.com/zarkiel/rails-nezekan"
+  spec.homepage      = "https://github.com/zarkiel/nezekan"
   spec.license       = "MIT"
 
   # Prevent pushing this gem to RubyGems.org. To allow pushes either set the 'allowed_push_host'
@@ -28,7 +28,8 @@ Gem::Specification.new do |spec|
   spec.bindir        = "exe"
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
-  spec.add_runtime_dependency(%q<rails>, [">= 3.2.3"])
+  spec.files = ["lib/nezekan.rb"]
+  spec.add_runtime_dependency 'rails', '~> 3.2', '>= 3.2.3'
   spec.add_development_dependency "bundler", "~> 1.15"
   spec.add_development_dependency "rake", "~> 10.0"
   spec.add_development_dependency "rspec", "~> 3.0"
